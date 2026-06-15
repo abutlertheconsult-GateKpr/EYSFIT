@@ -4,37 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>IRON LOG</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="IRON LOG">
+<meta name="theme-color" content="#ff4d00">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ── CROSSFIT GAMES DESIGN SYSTEM ── */
+/* ── IRON LOG — MODERN CROSSFIT DESIGN SYSTEM ── */
 :root{
-  --bg:#0e0e0d;
-  --bg2:#141413;
-  --surface:#1a1a18;
-  --surface2:#202020;
-  --surface3:#2a2a28;
-  --border:#303030;
-  --border2:#404040;
-  /* Orange accent system */
-  --orange:#e8500a;
-  --orange2:#ff6520;
-  --orange3:#ff8c55;
-  --orange-glow:rgba(232,80,10,0.18);
+  /* Base */
+  --bg:#080809;
+  --bg2:#0f0f11;
+  --surface:rgba(255,255,255,0.04);
+  --surface2:rgba(255,255,255,0.07);
+  --surface3:rgba(255,255,255,0.10);
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.14);
+  /* Orange — electric, saturated */
+  --orange:#ff4d00;
+  --orange2:#ff6a1f;
+  --orange3:#ff9555;
+  --orange-glow:rgba(255,77,0,0.15);
+  --orange-glow2:rgba(255,77,0,0.08);
   /* Utility */
-  --white:#f5f5f5;
-  --white2:#c8c8c4;
-  --white3:#8a8a86;
-  --white4:#505050;
-  --green:#1a4a1a;
-  --green2:#236023;
-  --green3:#3d9e3d;
-  --red:#5a0f0f;
-  --red2:#8b1a1a;
-  --red3:#d42828;
+  --white:#ffffff;
+  --white2:#e0e0e0;
+  --white3:#909090;
+  --white4:#484848;
+  --green:#0d3d1a;
+  --green2:#1a6b2e;
+  --green3:#34d058;
+  --red:#3d0d0d;
+  --red2:#7a1515;
+  --red3:#ff3b3b;
   /* Typography */
   --font-display:'Barlow Condensed',sans-serif;
   --font-body:'Inter',sans-serif;
   --font-mono:'DM Mono',monospace;
+  /* Effects */
+  --radius:14px;
+  --radius-sm:8px;
+  --radius-xs:5px;
+  --glass:blur(20px) saturate(180%);
+  --shadow-card:0 2px 16px rgba(0,0,0,0.5);
+  --shadow-orange:0 4px 24px rgba(255,77,0,0.3);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;max-height:100%;position:fixed;width:100%;background:var(--bg);color:var(--white);font-family:var(--font-body);font-size:14px;overflow:hidden}
@@ -45,21 +65,21 @@ select option{background:var(--surface2)}
 ::placeholder{color:var(--white4)}
 
 /* ── LAYOUT ── */
-#app{display:flex;flex-direction:column;height:100%;width:100%;position:fixed;top:0;left:0;bottom:0;right:0}
+#app{display:flex;flex-direction:column;height:100%;width:100%;position:fixed;top:0;left:0;bottom:0;right:0;background:var(--bg)}
 #content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;min-height:0}
 #content::-webkit-scrollbar{width:3px}
 #content::-webkit-scrollbar-thumb{background:var(--orange);border-radius:0}
 
 /* ── NAV ── */
-#nav{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;z-index:100;width:100%;padding-bottom:max(8px,env(safe-area-inset-bottom,8px))}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 6px;background:none;color:var(--white4);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-family:var(--font-body);font-weight:600;transition:color .15s;border-top:2px solid transparent;position:relative}
+#nav{display:flex;background:rgba(8,8,9,0.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);flex-shrink:0;z-index:100;width:100%;padding-bottom:max(10px,env(safe-area-inset-bottom,10px))}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 6px;background:none;color:var(--white4);font-size:9px;letter-spacing:1px;text-transform:uppercase;font-family:var(--font-body);font-weight:600;transition:all .2s;position:relative}
 .nav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.nav-btn.active{color:var(--orange);border-top-color:var(--orange)}
+.nav-btn.active{color:var(--orange)}.nav-btn.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:2px;background:var(--orange);border-radius:1px}
 .nav-btn.active svg{stroke:var(--orange)}
 
 /* ── PAGES ── */
 .page{display:none}.page.active{display:block}
-.page-header{padding:14px 16px 12px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:50}
+.page-header{padding:16px 16px 14px;border-bottom:1px solid var(--border);background:rgba(8,8,9,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);position:sticky;top:0;z-index:50}
 .page-title{font-family:var(--font-display);font-size:36px;font-weight:900;letter-spacing:3px;color:var(--white);line-height:1;text-transform:uppercase}
 .page-title span{color:var(--orange)}
 .page-sub{color:var(--white4);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:1px;font-weight:600}
@@ -70,26 +90,26 @@ select option{background:var(--surface2)}
 .section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--orange) 0%,var(--border) 100%)}
 
 /* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:9px 16px;border-radius:2px;font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;transition:all .12s;white-space:nowrap;font-family:var(--font-body)}
-.btn-primary{background:var(--orange);color:#fff;border:none}
-.btn-primary:hover{background:var(--orange2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;transition:all .15s;white-space:nowrap;font-family:var(--font-body)}
+.btn-primary{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff;border:none;box-shadow:0 2px 14px rgba(255,77,0,.35)}
+.btn-primary:hover{filter:brightness(1.1);box-shadow:0 4px 20px rgba(255,77,0,.45)}
 .btn-orange{background:transparent;color:var(--orange);border:1.5px solid var(--orange)}
 .btn-orange:hover{background:var(--orange-glow)}
-.btn-ghost{background:var(--surface2);color:var(--white2);border:1px solid var(--border2)}
-.btn-ghost:hover{border-color:var(--orange);color:var(--orange)}
+.btn-ghost{background:rgba(255,255,255,0.07);color:var(--white2);border:1px solid rgba(255,255,255,0.12)}
+.btn-ghost:hover{background:rgba(255,255,255,0.11);color:var(--white);border-color:rgba(255,255,255,0.2)}
 .btn-danger{background:transparent;color:var(--red3);border:1px solid var(--red2)}
 .btn-danger:hover{background:var(--red2);color:#fff}
 .btn-green{background:var(--green2);color:#fff;border:1px solid var(--green3)}
 .btn-green:hover{background:var(--green3)}
-.btn-sm{padding:5px 10px;font-size:10px;letter-spacing:1px}
-.btn-icon{width:28px;height:28px;padding:0;border-radius:2px;flex-shrink:0}
+.btn-sm{padding:5px 11px;font-size:10px;letter-spacing:.8px;border-radius:6px}
+.btn-icon{width:28px;height:28px;padding:0;border-radius:6px;flex-shrink:0}
 .btn-gold{background:var(--orange);color:#fff;border:none}
 .btn-gold:hover{background:var(--orange2)}
 .full{width:100%}
 
 /* ── STAT CARDS ── */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 16px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:2px;padding:12px 12px 10px;position:relative;overflow:hidden}
+.stat-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;position:relative;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.5)}
 .stat-label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--white4);margin-bottom:5px;font-weight:600}
 .stat-value{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--white);line-height:1}
 .stat-unit{font-size:11px;color:var(--white4);margin-left:3px;font-weight:400;font-family:var(--font-body)}
@@ -102,7 +122,7 @@ select option{background:var(--surface2)}
 /* ── CALENDAR ── */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:8px 16px}
 .cal-hcell{text-align:center;font-size:9px;text-transform:uppercase;color:var(--white4);padding:5px 0;letter-spacing:1px;font-weight:600}
-.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:2px;background:var(--surface);border:1px solid var(--border);cursor:pointer;font-size:12px;font-weight:600;transition:all .12s;position:relative;font-family:var(--font-display);letter-spacing:.5px}
+.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);cursor:pointer;font-size:12px;font-weight:600;transition:all .15s;position:relative;font-family:var(--font-display);letter-spacing:.5px}
 .cal-day:hover{border-color:var(--orange);color:var(--orange)}
 .cal-day.today{border-color:var(--orange);color:var(--orange);background:var(--orange-glow)}
 .cal-day.done{background:rgba(26,74,26,.4);border-color:var(--green3);color:var(--green3)}
@@ -112,9 +132,9 @@ select option{background:var(--surface2)}
 .cal-day.done .cal-dot{background:var(--green3)}.cal-day.missed .cal-dot{background:var(--red3)}
 
 /* ── MODALS ── */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:flex-end;justify-content:center}
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:200;align-items:flex-end;justify-content:center}
 .modal-backdrop.open{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border);border-top:2px solid var(--orange);border-radius:0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:20px 16px 36px;scrollbar-width:thin;scrollbar-color:var(--orange) transparent;position:relative}
+.modal{background:rgba(14,14,16,0.97);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border:1px solid rgba(255,255,255,0.1);border-top:2px solid var(--orange);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:22px 16px 36px;scrollbar-width:thin;scrollbar-color:rgba(255,77,0,.3) transparent;position:relative}
 .modal-title{font-family:var(--font-display);font-size:28px;font-weight:900;letter-spacing:3px;color:var(--white);margin-bottom:14px;text-transform:uppercase}
 .modal-close{position:absolute;top:14px;right:14px;background:var(--surface2);color:var(--white3);border:1px solid var(--border);border-radius:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;z-index:10}
 .mrow{display:flex;gap:8px;align-items:center;margin-bottom:10px}
@@ -122,13 +142,13 @@ select option{background:var(--surface2)}
 
 /* ── WORKOUT CARDS ── */
 .wsc{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:2px;margin-bottom:8px;overflow:hidden}
-.wsh{padding:10px 13px;display:flex;align-items:center;gap:8px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.wsh{padding:12px 14px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.06)}
 .wsb{padding:8px 13px}
 .set-hdr{display:grid;grid-template-columns:24px 1fr 1fr 70px 28px 28px 28px;gap:4px;margin-bottom:5px}
 .set-hdr span{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--white4);text-align:center;font-weight:600}
 .set-row{display:grid;grid-template-columns:24px 1fr 1fr 70px 28px 28px 28px;gap:4px;align-items:center;margin-bottom:4px}
 .set-num{font-family:var(--font-mono);font-size:11px;color:var(--white4);text-align:center}
-.set-check{width:28px;height:28px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:1px solid var(--border2);background:var(--surface3);transition:all .12s;flex-shrink:0;font-weight:700}
+.set-check{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);transition:all .15s;flex-shrink:0;font-weight:700}
 .set-check.done{background:var(--green2);border-color:var(--green3);color:#fff}
 .set-check.failed{background:var(--red2);border-color:var(--red3);color:#fff}
 .break-row{display:flex;align-items:center;gap:8px;margin:3px 0;padding:5px 8px;background:rgba(232,80,10,.07);border:1px solid rgba(232,80,10,.25);border-radius:2px}
@@ -138,17 +158,17 @@ select option{background:var(--surface2)}
 .between-sets-btn:hover{border-color:var(--orange);color:var(--orange)}
 
 /* ── ROUTINES ── */
-.routine-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:2px;margin:5px 16px;overflow:hidden}
+.routine-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;margin:5px 16px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.4)}
 .routine-header{padding:12px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--surface)}
 .routine-header:hover{background:var(--surface2)}
-.routine-badge{background:var(--orange);color:#fff;font-size:8px;text-transform:uppercase;letter-spacing:1px;padding:2px 7px;border-radius:1px;font-weight:700;flex-shrink:0;font-family:var(--font-body)}
+.routine-badge{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff;font-size:8px;text-transform:uppercase;letter-spacing:1px;padding:3px 9px;border-radius:99px;font-weight:700;flex-shrink:0;font-family:var(--font-body)}
 .routine-days{padding:0 14px 14px;display:none;background:var(--bg2)}
 .routine-day{border-top:1px solid var(--border);padding:10px 0}
 .routine-day-title{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--orange);margin-bottom:6px;font-weight:700}
 .routine-exercise{font-size:12px;color:var(--white3);padding:3px 0 3px 10px;border-left:2px solid var(--border2);margin-bottom:3px}
 
 /* ── LINKS ── */
-.link-item{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:2px;padding:11px 13px;margin:5px 16px;display:flex;align-items:center;gap:10px}
+.link-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:13px 14px;margin:5px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 16px rgba(0,0,0,.4)}
 .link-favicon{width:28px;height:28px;border-radius:2px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 .link-info{flex:1;min-width:0}
 .link-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -205,7 +225,7 @@ select option{background:var(--surface2)}
 
 /* ── STAT EDIT ── */
 .stat-edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat-edit-item{background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--orange);border-radius:2px;padding:10px}
+.stat-edit-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px}
 .stat-edit-item label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--white4);display:block;margin-bottom:5px;font-weight:700}
 .cycle-sel{margin-top:4px;font-size:11px;background:var(--surface3);border:1px solid var(--border);color:var(--white3);border-radius:2px}
 
@@ -232,6 +252,32 @@ select option{background:var(--surface2)}
 .img-preview{width:100%;height:110px;object-fit:cover;border-radius:2px;margin-bottom:8px}
 
 
+
+
+/* ── TIMER QUEUE PANEL ── */
+#bt-queue-panel{display:none;border-top:1px solid var(--border);max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--orange) transparent}
+#bt-queue-panel.open{display:block}
+.bt-queue-row{display:flex;align-items:center;gap:8px;padding:7px 14px;border-bottom:1px solid var(--border);cursor:default;transition:background .12s;touch-action:none}
+.bt-queue-row.active-row{background:var(--orange-glow2);border-left:2px solid var(--orange)}
+.bt-queue-row.drag-over{border-top:2px solid var(--orange)}
+.bt-queue-row.dragging-row{opacity:.4}
+.bt-q-handle{color:var(--white4);font-size:14px;cursor:grab;flex-shrink:0;padding:0 2px;touch-action:none;user-select:none}
+.bt-q-handle:active{color:var(--orange)}
+.bt-q-idx{font-family:var(--font-mono);font-size:10px;color:var(--white4);min-width:18px;text-align:right;flex-shrink:0}
+.bt-q-type{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;min-width:52px}
+.bt-q-type.workout{color:var(--orange)}
+.bt-q-type.brk{color:var(--white4)}
+.bt-q-name{font-size:12px;font-weight:600;color:var(--white);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt-q-info{font-size:10px;color:var(--white4);flex-shrink:0}
+.bt-q-time{font-family:var(--font-mono);font-size:11px;color:var(--white3);flex-shrink:0}
+
+/* ── DRAG & DROP ── */
+.wsc{transition:opacity .15s,transform .15s,box-shadow .15s}
+.wsc.dragging{opacity:.35;transform:scale(.97)}
+.wsc.drag-over{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-glow),var(--shadow-card)}
+.drag-handle{cursor:grab;color:var(--white4);font-size:16px;padding:0 6px;display:flex;align-items:center;flex-shrink:0;touch-action:none;user-select:none}
+.drag-handle:active{cursor:grabbing;color:var(--orange)}
+
 /* ── CUSTOM SOUND ── */
 .custom-sound-slot{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:10px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
 .custom-sound-slot.selected{border-color:var(--orange);border-left:3px solid var(--orange);background:var(--orange-glow)}
@@ -254,9 +300,9 @@ select option{background:var(--surface2)}
 
 /* ── MISC ── */
 .section-divider{display:flex;align-items:center;gap:10px;padding:10px 16px 5px}
-.section-divider span{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--white4);font-weight:700;white-space:nowrap}
+.section-divider span{font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--white4);font-weight:600;white-space:nowrap}
 .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-#toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:var(--orange);color:#fff;padding:8px 20px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:0;transition:all .3s;z-index:999;pointer-events:none}
+#toast{position:fixed;bottom:calc(80px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%) translateY(20px);background:rgba(255,77,0,0.95);backdrop-filter:blur(12px);color:#fff;padding:10px 22px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:999;pointer-events:none;box-shadow:0 4px 20px rgba(255,77,0,.4)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </style>
@@ -320,7 +366,13 @@ select option{background:var(--surface2)}
     </div>
     <div class="bt-countdown" id="bt-countdown">0:00</div>
     <div class="bt-progress" style="margin-bottom:4px"><div class="bt-progress-fill" id="bt-progress-fill" style="width:100%"></div></div>
-    <div class="bt-queue-info" id="bt-queue-info"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 14px 4px">
+      <div class="bt-queue-info" id="bt-queue-info" style="padding:0"></div>
+      <button onclick="toggleQueuePanel()" id="bt-queue-toggle" style="background:none;border:1px solid var(--border2);border-radius:2px;color:var(--white4);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;cursor:pointer">Queue ▾</button>
+    </div>
+    <div id="bt-queue-panel">
+      <div id="bt-queue-rows"></div>
+    </div>
     <div class="bt-controls">
       <button class="bt-btn bt-btn-start" id="bt-playpause" onclick="toggleTimer()">▶</button>
     </div>
@@ -838,17 +890,27 @@ function renderToday(){
   }
   document.getElementById('start-timer-fab').style.display='block';
   log.forEach((ex,ei)=>{
-    html+=`<div class="wsc"><div class="wsh"><div style="flex:1"><div style="font-size:13px;font-weight:500">${ex.name}</div><div style="font-size:11px;color:var(--white4)">${ex.category||''} ${ex.totalTime?'· '+ex.totalTime:''}</div></div><button class="btn btn-danger btn-sm btn-icon" onclick="removeExerciseToday(${ei})">✕</button></div>
-    <div class="wsb">
-      <div class="set-hdr"><span>#</span><span>Reps</span><span>Weight</span><span>Time</span><span>✓</span><span>⧉</span><span>✕</span></div>
-      ${buildSessionRows(ex.rows||[],ei)}
-      <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="addSetToExercise(${ei})">+ Set</button>
-        <button class="btn btn-ghost btn-sm" onclick="addBreakToExercise(${ei},null)">+ Break</button>
+    html+=`<div class="wsc" data-ei="${ei}" draggable="true">
+      <div class="wsh">
+        <div class="drag-handle" title="Drag to reorder">⠿</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;letter-spacing:.3px">${ex.name}</div>
+          <div style="font-size:10px;color:var(--white4);text-transform:uppercase;letter-spacing:.5px">${ex.category||''} ${ex.totalTime&&ex.totalTime!=='0:00'?'· '+ex.totalTime:''}</div>
+        </div>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="removeExerciseToday(${ei})">✕</button>
       </div>
-    </div></div>`;
+      <div class="wsb">
+        <div class="set-hdr"><span>#</span><span>Reps</span><span>Weight</span><span>Time</span><span>✓</span><span>⧉</span><span>✕</span></div>
+        ${buildSessionRows(ex.rows||[],ei)}
+        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="addSetToExercise(${ei})">+ Set</button>
+          <button class="btn btn-ghost btn-sm" onclick="addBreakToExercise(${ei},null)">+ Break</button>
+        </div>
+      </div>
+    </div>`;
   });
   document.getElementById('today-panel').innerHTML=html;
+  initDragDrop();
 }
 function buildSessionRows(rows,ei){
   let html='';let setIdx=0;
@@ -981,8 +1043,34 @@ function confirmSaveSessionRoutine(){
   const name=document.getElementById('ssr-name').value.trim();const dayLabel=document.getElementById('ssr-day').value.trim()||'Day 1';
   if(!name){toast('Enter a routine name');return;}
   const log=S.workoutLog[sessionDate]||[];
-  const exLines=log.map(ex=>{const sets=ex.rows?ex.rows.filter(r=>r.type==='set').length:0;return ex.name+(sets?` ${sets}×sets`:'');}).join('\n');
-  S.customRoutines.push({name,days:1,desc:'Saved from '+sessionDate,schedule:[{title:dayLabel,exercises:exLines}]});
+  // Build rich exercise text including sets, reps, weight, time
+  const exLines=log.map(ex=>{
+    const sets=ex.rows?ex.rows.filter(r=>r.type==='set'):[];
+    const breaks=ex.rows?ex.rows.filter(r=>r.type==='break'):[];
+    let line=ex.name;
+    if(sets.length){
+      const setDetails=sets.map((s,i)=>{
+        let detail=`Set ${i+1}`;
+        if(s.reps) detail+=` ${s.reps}reps`;
+        if(s.lbs) detail+=` @ ${s.lbs}lbs`;
+        if(s.sec&&s.sec>0) detail+=` (${fmtSec(s.sec)})`;
+        return detail;
+      }).join(', ');
+      line+=` — ${setDetails}`;
+    }
+    if(breaks.length) line+=` | Breaks: ${breaks.map(b=>fmtSec(b.sec||60)).join(', ')}`;
+    if(ex.totalTime&&ex.totalTime!=='0:00') line+=` | Total: ${ex.totalTime}`;
+    return line;
+  }).join('\n');
+  // Also store structured data for future loading with times
+  const structuredExercises=log.map(ex=>({
+    name:ex.name,category:ex.category||'',totalTime:ex.totalTime||'0:00',
+    rows:JSON.parse(JSON.stringify(ex.rows||[]))
+  }));
+  S.customRoutines.push({
+    name,days:1,desc:'Saved from '+sessionDate,
+    schedule:[{title:dayLabel,exercises:exLines,structured:structuredExercises}]
+  });
   saveS();closeModal('modal-save-session-routine');toast('Saved as "'+name+'"');
 }
 
@@ -997,9 +1085,9 @@ function buildTimerQueue(){
       if(row.type==='set'){
         const setNum=(ex.rows||[]).slice(0,ri).filter(r=>r.type==='set').length+1;
         const totalSets=(ex.rows||[]).filter(r=>r.type==='set').length;
-        q.push({label:'WORKOUT',name:ex.name,info:`Set ${setNum} of ${totalSets}`,sec:row.sec||30,isBreak:false});
+        q.push({label:'WORKOUT',name:ex.name,info:'Set '+setNum+' of '+totalSets,sec:row.sec||30,isBreak:false});
       } else if(row.type==='break'){
-        q.push({label:'BREAK',name:'Rest',info:'Next: '+(log[log.indexOf(ex)]?ex.name:''),sec:row.sec||60,isBreak:true});
+        q.push({label:'BREAK',name:'Rest',info:'',sec:row.sec||60,isBreak:true});
       }
     });
     if(!ex.rows||!ex.rows.length){
@@ -1008,26 +1096,32 @@ function buildTimerQueue(){
   });
   return q;
 }
+
 function initTimer(){
   timerQueue=buildTimerQueue();
   if(!timerQueue.length){toast('No timed sets to run');return;}
   timerIdx=0;timerRunning=false;
   loadTimerItem();
+  renderQueuePanel();
   document.getElementById('boxer-timer').classList.add('active');
   document.getElementById('start-timer-fab').style.display='none';
   document.getElementById('content').scrollTop=0;
 }
+
 function loadTimerItem(){
   const item=timerQueue[timerIdx];if(!item)return;
   timerSec=item.sec;timerTotal=item.sec;
   document.getElementById('bt-phase-label').textContent=item.label;
   document.getElementById('bt-ex-name').textContent=item.name;
   document.getElementById('bt-set-info').textContent=item.info||'';
-  document.getElementById('bt-queue-info').textContent=`${timerIdx+1} / ${timerQueue.length}`;
+  document.getElementById('bt-queue-info').textContent=(timerIdx+1)+' / '+timerQueue.length;
   updateCountdownDisplay();
   document.getElementById('bt-playpause').textContent='▶';
   document.getElementById('bt-countdown').classList.remove('pulse');
+  // Highlight active row in queue
+  document.querySelectorAll('.bt-queue-row').forEach((r,i)=>r.classList.toggle('active-row',i===timerIdx));
 }
+
 function updateCountdownDisplay(){
   const el=document.getElementById('bt-countdown');
   const fill=document.getElementById('bt-progress-fill');
@@ -1035,9 +1129,9 @@ function updateCountdownDisplay(){
   fill.style.width=(timerTotal>0?(timerSec/timerTotal)*100:0)+'%';
   if(timerSec<=10&&timerSec>0){el.classList.add('pulse');}else{el.classList.remove('pulse');}
 }
-function toggleTimer(){
-  if(timerRunning){pauseTimer();}else{startTimer();}
-}
+
+function toggleTimer(){if(timerRunning){pauseTimer();}else{startTimer();}}
+
 function startTimer(){
   timerRunning=true;
   document.getElementById('bt-playpause').textContent='⏸';
@@ -1047,16 +1141,15 @@ function startTimer(){
     timerSec--;
     updateCountdownDisplay();
     if(timerSec<=10&&timerSec>0)soundTick();
-    if(timerSec===0){
-      const item=timerQueue[timerIdx];
-      if(item.isBreak)soundBreakStart();else soundSetEnd();
-    }
+    if(timerSec===0){const item=timerQueue[timerIdx];if(item.isBreak)soundBreakStart();else soundSetEnd();}
   },1000);
 }
+
 function pauseTimer(){
   timerRunning=false;clearInterval(timerInterval);
   document.getElementById('bt-playpause').textContent='▶';
 }
+
 function advanceTimer(){
   clearInterval(timerInterval);timerRunning=false;
   timerIdx++;
@@ -1068,10 +1161,12 @@ function advanceTimer(){
     document.getElementById('bt-set-info').textContent='';
     document.getElementById('bt-queue-info').textContent='All sets finished';
     document.getElementById('bt-playpause').textContent='▶';
+    document.querySelectorAll('.bt-queue-row').forEach(r=>r.classList.remove('active-row'));
     toast('Workout complete! 🏆');return;
   }
-  loadTimerItem();startTimer();
+  loadTimerItem();renderQueuePanel();startTimer();
 }
+
 function stopTimer(){
   clearInterval(timerInterval);timerRunning=false;
   document.getElementById('boxer-timer').classList.remove('active');
@@ -1198,7 +1293,28 @@ function loadRoutineDay(rid,dayLabel){
   day.exercises.forEach(ex=>{const m=ex.match(/(\d+)×(\d+)/);const ns=m?parseInt(m[1]):3;const nr=m?m[2]:'';const rows=[];for(let i=0;i<ns;i++){rows.push({type:'set',reps:nr,lbs:'',sec:0,status:''});}S.workoutLog[sessionDate].push({name:ex.replace(/\s+\d+×\d+/,'').trim(),category:'',rows,totalTime:'0:00'});});
   saveS();loadWorkoutDate(sessionDate);toast('Loaded');
 }
-function loadCustomRoutineDay(ri,di){const day=S.customRoutines[ri].schedule[di];if(!day)return;if(!S.workoutLog[sessionDate])S.workoutLog[sessionDate]=[];const lines=(day.exercises||'').split('\n').filter(Boolean);lines.forEach(ex=>{S.workoutLog[sessionDate].push({name:ex.trim(),category:'',rows:[{type:'set',reps:'',lbs:'',sec:0,status:''}],totalTime:'0:00'});});saveS();loadWorkoutDate(sessionDate);toast('Loaded');}
+function loadCustomRoutineDay(ri,di){
+  const day=S.customRoutines[ri].schedule[di];if(!day)return;
+  if(!S.workoutLog[sessionDate])S.workoutLog[sessionDate]=[];
+  if(day.structured&&day.structured.length){
+    // Load with full structure including times
+    day.structured.forEach(ex=>{
+      S.workoutLog[sessionDate].push({
+        name:ex.name,category:ex.category||'',
+        totalTime:ex.totalTime||'0:00',
+        rows:JSON.parse(JSON.stringify(ex.rows||[]))
+      });
+    });
+  } else {
+    // Fallback: parse text lines
+    const lines=(day.exercises||'').split('\n').filter(Boolean);
+    lines.forEach(ex=>{
+      const name=ex.split(' — ')[0].trim();
+      S.workoutLog[sessionDate].push({name,category:'',rows:[{type:'set',reps:'',lbs:'',sec:0,status:''}],totalTime:'0:00'});
+    });
+  }
+  saveS();loadWorkoutDate(sessionDate);toast('Routine loaded with times');
+}
 
 // ═══════════════ LINKS ═══════════════
 function renderLinks(){
@@ -1296,7 +1412,263 @@ function saveFirebaseConfig(){S.firebaseConfig={apiKey:document.getElementById('
 async function syncToFirebase(){const cfg=S.firebaseConfig;if(!cfg?.apiKey||!cfg?.projectId){document.getElementById('fb-status').textContent='⚠ Configure first';return;}document.getElementById('fb-status').textContent='↑ Pushing...';try{const res=await fetch(`https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents/ironlog/data?key=${cfg.apiKey}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:JSON.stringify(S)}}})});if(res.ok){document.getElementById('fb-status').textContent='✓ Pushed '+new Date().toLocaleTimeString();toast('Synced ✓');}else{const e=await res.json();document.getElementById('fb-status').textContent='✗ '+(e.error?.message||'Failed');}}catch(e){document.getElementById('fb-status').textContent='✗ '+e.message;}}
 async function loadFromFirebase(){const cfg=S.firebaseConfig;if(!cfg?.apiKey||!cfg?.projectId){document.getElementById('fb-status').textContent='⚠ Configure first';return;}document.getElementById('fb-status').textContent='↓ Pulling...';try{const res=await fetch(`https://firestore.googleapis.com/v1/projects/${cfg.projectId}/databases/(default)/documents/ironlog/data?key=${cfg.apiKey}`);if(res.ok){const doc=await res.json();const raw=doc.fields?.data?.stringValue;if(raw){S={...S,...JSON.parse(raw)};saveS();document.getElementById('fb-status').textContent='✓ Pulled '+new Date().toLocaleTimeString();renderSettings();toast('Data loaded ✓');}else{document.getElementById('fb-status').textContent='No data found';}}else{document.getElementById('fb-status').textContent='✗ Check config';}}catch(e){document.getElementById('fb-status').textContent='✗ '+e.message;}}
 
+// ═══════════════════════════════════════════
+// DRAG & DROP
+// ═══════════════════════════════════════════
+let _dndSrc=null,_dndTgt=null,_touchGhost=null,_touchOffsetY=0,_touchSrcCard=null;
+
+// Nuclear ghost cleanup — call this from ANYWHERE to guarantee no ghost remains
+function _killGhost(){
+  // Remove all ghosts that may exist (handles edge cases where multiple were created)
+  document.querySelectorAll('._dnd-ghost').forEach(g=>g.remove());
+  if(_touchGhost){try{_touchGhost.remove();}catch(e){}  _touchGhost=null;}
+  if(_touchSrcCard){_touchSrcCard.style.opacity='';_touchSrcCard=null;}
+  document.querySelectorAll('.wsc').forEach(c=>{
+    c.classList.remove('drag-over','dragging');
+    c.style.opacity='';
+  });
+}
+
+// Safety net: if touch is cancelled by browser (scroll, phone call, etc.)
+document.addEventListener('touchcancel',()=>{_killGhost();_dndSrc=null;_dndTgt=null;});
+// Extra safety: if touch ends anywhere on document (fires even if touchend on handle missed)
+document.addEventListener('touchend',()=>{
+  // Defer so handle's own touchend fires first
+  setTimeout(()=>{
+    if(_touchGhost){_killGhost();_dndSrc=null;_dndTgt=null;}
+  },50);
+},{passive:true,capture:true});
+
+function initDragDrop(){
+  const panel=document.getElementById('today-panel');
+  if(!panel)return;
+
+  // ── Mouse / Desktop ──
+  panel.querySelectorAll('.wsc[data-ei]').forEach(card=>{
+    card.addEventListener('dragstart',e=>{
+      _dndSrc=+card.dataset.ei;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+    });
+    card.addEventListener('dragend',e=>{
+      const from=_dndSrc,to=_dndTgt;
+      _dndSrc=null;_dndTgt=null;
+      card.classList.remove('dragging');
+      panel.querySelectorAll('.wsc').forEach(c=>c.classList.remove('drag-over'));
+      if(from!==null&&to!==null&&from!==to)reorderExercises(from,to);
+    });
+    card.addEventListener('dragover',e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      _dndTgt=+card.dataset.ei;
+      panel.querySelectorAll('.wsc').forEach(c=>c.classList.remove('drag-over'));
+      card.classList.add('drag-over');
+    });
+  });
+
+  // ── Touch — only activate from the ⠿ handle ──
+  panel.querySelectorAll('.drag-handle').forEach(handle=>{
+
+    handle.addEventListener('touchstart',e=>{
+      // Kill any leftover ghost from a previous drag
+      _killGhost();
+
+      const card=handle.closest('.wsc[data-ei]');
+      if(!card)return;
+      _dndSrc=+card.dataset.ei;
+      _touchSrcCard=card;
+
+      const touch=e.touches[0];
+      const rect=card.getBoundingClientRect();
+      _touchOffsetY=touch.clientY-rect.top;
+
+      // Build ghost clone
+      _touchGhost=card.cloneNode(true);
+      _touchGhost.className+=' _dnd-ghost';
+      _touchGhost.style.cssText=[
+        'position:fixed',
+        'left:'+rect.left+'px',
+        'top:'+rect.top+'px',
+        'width:'+rect.width+'px',
+        'opacity:.85',
+        'pointer-events:none',
+        'z-index:9999',
+        'border:2px solid var(--orange)',
+        'box-shadow:0 8px 32px rgba(0,0,0,.7)',
+        'transform:scale(1.02)',
+        'transition:none'
+      ].join(';');
+      document.body.appendChild(_touchGhost);
+      card.style.opacity='.3';
+    },{passive:true});
+
+    handle.addEventListener('touchmove',e=>{
+      e.preventDefault();
+      if(!_touchGhost)return;
+      const touch=e.touches[0];
+
+      // Move ghost
+      _touchGhost.style.top=(touch.clientY-_touchOffsetY)+'px';
+
+      // Find card under finger (hide ghost so it doesn't block elementFromPoint)
+      _touchGhost.style.visibility='hidden';
+      const el=document.elementFromPoint(touch.clientX,touch.clientY);
+      _touchGhost.style.visibility='';
+
+      panel.querySelectorAll('.wsc').forEach(c=>c.classList.remove('drag-over'));
+      const overCard=el&&el.closest('.wsc[data-ei]');
+      if(overCard&&overCard!==_touchSrcCard){
+        _dndTgt=+overCard.dataset.ei;
+        overCard.classList.add('drag-over');
+      } else {
+        _dndTgt=null;
+      }
+    },{passive:false});
+
+    handle.addEventListener('touchend',e=>{
+      const from=_dndSrc,to=_dndTgt;
+      // Kill ghost FIRST before any re-render
+      _killGhost();
+      _dndSrc=null;_dndTgt=null;
+      if(from!==null&&to!==null&&from!==to)reorderExercises(from,to);
+    },{passive:true});
+
+  });
+}
+
+function reorderExercises(fromIdx,toIdx){
+  const log=S.workoutLog[sessionDate];
+  if(!log||fromIdx===toIdx)return;
+  const moved=log.splice(fromIdx,1)[0];
+  log.splice(toIdx,0,moved);
+  saveS();renderToday();toast('Exercise moved');
+}
+
 // ═══════════════ INIT ═══════════════
+
+// ═══════════════ TIMER QUEUE PANEL & DnD ═══════════════
+let _qDndSrc=null,_qDndTgt=null,_qTouchGhost=null,_qTouchOffsetY=0,_qTouchSrcRow=null;
+
+function toggleQueuePanel(){
+  const panel=document.getElementById('bt-queue-panel');
+  const btn=document.getElementById('bt-queue-toggle');
+  const open=panel.classList.toggle('open');
+  btn.textContent=open?'Queue ▴':'Queue ▾';
+  if(open)renderQueuePanel();
+}
+
+function renderQueuePanel(){
+  const panel=document.getElementById('bt-queue-panel');
+  if(!panel.classList.contains('open'))return;
+  const rows=document.getElementById('bt-queue-rows');
+  rows.innerHTML='';
+  timerQueue.forEach((item,i)=>{
+    const row=document.createElement('div');
+    row.className='bt-queue-row'+(i===timerIdx?' active-row':'');
+    row.dataset.qi=i;
+    row.innerHTML=
+      '<span class="bt-q-handle">⠿</span>'+
+      '<span class="bt-q-idx">'+(i+1)+'</span>'+
+      '<span class="bt-q-type '+(item.isBreak?'brk':'workout')+'">'+(item.isBreak?'BREAK':'WORK')+'</span>'+
+      '<span class="bt-q-name">'+item.name+'</span>'+
+      '<span class="bt-q-info">'+item.info+'</span>'+
+      '<span class="bt-q-time">'+fmtSec(item.sec)+'</span>'+
+      '<button onclick="jumpToQueueItem('+i+')" style="background:none;border:1px solid var(--border2);border-radius:2px;color:var(--white4);font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 6px;cursor:pointer;margin-left:4px;flex-shrink:0">▶</button>';
+    rows.appendChild(row);
+  });
+  initQueueDnd();
+}
+
+function jumpToQueueItem(i){
+  // Pause, jump to item, reset its timer
+  pauseTimer();
+  timerIdx=i;
+  loadTimerItem();
+  renderQueuePanel();
+  toast('Jumped to item '+(i+1));
+}
+
+function initQueueDnd(){
+  const rows=document.getElementById('bt-queue-rows');
+  if(!rows)return;
+
+  // Mouse
+  rows.querySelectorAll('.bt-queue-row').forEach(row=>{
+    row.addEventListener('dragstart',e=>{_qDndSrc=+row.dataset.qi;row.classList.add('dragging-row');e.dataTransfer.effectAllowed='move';});
+    row.setAttribute('draggable','true');
+    row.addEventListener('dragend',e=>{
+      const f=_qDndSrc,t=_qDndTgt;_qDndSrc=null;_qDndTgt=null;
+      rows.querySelectorAll('.bt-queue-row').forEach(r=>r.classList.remove('dragging-row','drag-over'));
+      if(f!==null&&t!==null&&f!==t)reorderQueue(f,t);
+    });
+    row.addEventListener('dragover',e=>{
+      e.preventDefault();_qDndTgt=+row.dataset.qi;
+      rows.querySelectorAll('.bt-queue-row').forEach(r=>r.classList.remove('drag-over'));
+      row.classList.add('drag-over');
+    });
+  });
+
+  // Touch
+  rows.querySelectorAll('.bt-q-handle').forEach(handle=>{
+    handle.addEventListener('touchstart',e=>{
+      _killQGhost();
+      const row=handle.closest('.bt-queue-row');if(!row)return;
+      _qDndSrc=+row.dataset.qi;_qTouchSrcRow=row;
+      const touch=e.touches[0];const rect=row.getBoundingClientRect();
+      _qTouchOffsetY=touch.clientY-rect.top;
+      _qTouchGhost=row.cloneNode(true);
+      _qTouchGhost.className+=' _qdnd-ghost';
+      _qTouchGhost.style.cssText='position:fixed;left:'+rect.left+'px;top:'+rect.top+'px;width:'+rect.width+'px;opacity:.85;pointer-events:none;z-index:9999;border:1px solid var(--orange);background:var(--surface2);transition:none';
+      document.body.appendChild(_qTouchGhost);
+      row.style.opacity='.3';
+    },{passive:true});
+
+    handle.addEventListener('touchmove',e=>{
+      e.preventDefault();if(!_qTouchGhost)return;
+      const touch=e.touches[0];
+      _qTouchGhost.style.top=(touch.clientY-_qTouchOffsetY)+'px';
+      _qTouchGhost.style.visibility='hidden';
+      const el=document.elementFromPoint(touch.clientX,touch.clientY);
+      _qTouchGhost.style.visibility='';
+      const rows2=document.getElementById('bt-queue-rows');
+      const overRow=el&&el.closest('.bt-queue-row');
+      if(rows2)rows2.querySelectorAll('.bt-queue-row').forEach(r=>r.classList.remove('drag-over'));
+      if(overRow&&overRow!==_qTouchSrcRow){_qDndTgt=+overRow.dataset.qi;overRow.classList.add('drag-over');}
+      else _qDndTgt=null;
+    },{passive:false});
+
+    handle.addEventListener('touchend',e=>{
+      const f=_qDndSrc,t=_qDndTgt;
+      _killQGhost();_qDndSrc=null;_qDndTgt=null;
+      if(f!==null&&t!==null&&f!==t)reorderQueue(f,t);
+    },{passive:true});
+  });
+}
+
+function _killQGhost(){
+  document.querySelectorAll('._qdnd-ghost').forEach(g=>g.remove());
+  if(_qTouchGhost){try{_qTouchGhost.remove();}catch(e){}}_qTouchGhost=null;
+  if(_qTouchSrcRow){_qTouchSrcRow.style.opacity='';}_qTouchSrcRow=null;
+  const rows=document.getElementById('bt-queue-rows');
+  if(rows)rows.querySelectorAll('.bt-queue-row').forEach(r=>r.classList.remove('drag-over','dragging-row'));
+}
+
+document.addEventListener('touchcancel',_killQGhost);
+document.addEventListener('touchend',()=>{setTimeout(()=>{if(_qTouchGhost)_killQGhost();},55);},{passive:true,capture:true});
+
+function reorderQueue(fromIdx,toIdx){
+  if(fromIdx===toIdx)return;
+  const moved=timerQueue.splice(fromIdx,1)[0];
+  timerQueue.splice(toIdx,0,moved);
+  // Adjust current timerIdx to follow the active item
+  if(fromIdx===timerIdx) timerIdx=toIdx;
+  else if(fromIdx<timerIdx&&toIdx>=timerIdx) timerIdx--;
+  else if(fromIdx>timerIdx&&toIdx<=timerIdx) timerIdx++;
+  document.getElementById('bt-queue-info').textContent=(timerIdx+1)+' / '+timerQueue.length;
+  renderQueuePanel();
+  toast('Queue reordered');
+}
+
 renderStats();
 </script>
 
@@ -1332,5 +1704,15 @@ renderStats();
   <button class="btn btn-primary full" onclick="saveCustomSound()">Save Sound</button>
 </div></div>
 
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW error:', err));
+  });
+}
+</script>
 </body>
 </html>
