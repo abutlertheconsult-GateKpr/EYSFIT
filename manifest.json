@@ -2,7 +2,8 @@
   "name": "IRON LOG",
   "short_name": "IRON LOG",
   "description": "CrossFit-style workout tracker — log sessions, track stats, run intervals",
-  "start_url": "/index.html",
+  "start_url": "/iron-log/index.html",
+  "scope": "/iron-log/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#080809",
@@ -21,6 +22,5 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["fitness", "health", "sports"],
-  "screenshots": []
+  "categories": ["fitness", "health", "sports"]
 }
