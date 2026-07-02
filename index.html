@@ -61,7 +61,8 @@ html,body{height:100%;max-height:100%;position:fixed;width:100%;background:var(-
 button{font-family:var(--font-body);cursor:pointer;border:none;outline:none}
 input,select,textarea{font-family:var(--font-body);background:var(--surface2);border:1px solid var(--border);color:var(--white);border-radius:3px;padding:9px 12px;font-size:13px;outline:none;width:100%;letter-spacing:.3px}
 input:focus,select:focus,textarea:focus{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange-glow)}
-select option{background:var(--surface2)}
+select option{background:var(--bg2);color:var(--white);}
+select option:hover,select option:focus{background:rgba(255,255,255,0.12);color:var(--white);}
 ::placeholder{color:var(--white4)}
 
 /* ── LAYOUT ── */
@@ -483,6 +484,21 @@ select option{background:var(--surface2)}
   <button class="btn btn-primary full" style="margin-top:14px" onclick="saveGoals()">Save Goals</button>
 </div></div>
 
+<div class="modal-backdrop" id="modal-ai-prompt"><div class="modal">
+  <button class="modal-close" onclick="closeModal('modal-ai-prompt')">×</button>
+  <div class="modal-title">AI COACH PROMPT</div>
+  <textarea id="ai-prompt-text" style="width:100%;min-height:260px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:14px;color:#fff;padding:14px;resize:vertical;font-family:var(--font-body);font-size:13px;line-height:1.5;"></textarea>
+  <button class="btn btn-primary full" style="margin-top:14px" onclick="copyAiPrompt()">Copy Prompt</button>
+  <div style="margin-top:16px;font-size:11px;color:var(--white4)">Paste this prompt into your chosen AI chat service:</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+    <a class="btn btn-ghost full" href="https://chat.openai.com/" target="_blank" rel="noreferrer noopener">ChatGPT</a>
+    <a class="btn btn-ghost full" href="https://www.bing.com/chat" target="_blank" rel="noreferrer noopener">Bing Chat</a>
+    <a class="btn btn-ghost full" href="https://claude.ai" target="_blank" rel="noreferrer noopener">Claude</a>
+    <a class="btn btn-ghost full" href="https://gemini.google.com/" target="_blank" rel="noreferrer noopener">Gemini</a>
+    <a class="btn btn-ghost full" href="https://www.perplexity.ai/" target="_blank" rel="noreferrer noopener">Perplexity</a>
+  </div>
+</div></div>
+
 <div class="modal-backdrop" id="modal-add-exercise"><div class="modal">
   <button class="modal-close" onclick="closeModal('modal-add-exercise')">×</button>
   <div class="modal-title">ADD EXERCISE</div>
@@ -631,6 +647,7 @@ select option{background:var(--surface2)}
 const DEFAULT_STAT_FIELDS=[
   {key:'dob',label:'Date of Birth',unit:'',cycle:'yearly',type:'info'},
   {key:'gender',label:'Gender',unit:'',cycle:'yearly',type:'info'},
+  {key:'body_type',label:'Body Type',unit:'',cycle:'yearly',type:'info'},
   {key:'weight',label:'Weight',unit:'lbs',cycle:'weekly',type:'measurement'},
   {key:'height',label:'Height',unit:'in',cycle:'yearly',type:'measurement'},
   {key:'body_fat',label:'Body Fat %',unit:'%',cycle:'monthly',type:'measurement'},
@@ -1283,7 +1300,7 @@ function showPage(id,btn){
 function renderStats(){
   const latest=S.statHistory.length?S.statHistory[S.statHistory.length-1]:null;
   const prev=S.statHistory.length>1?S.statHistory[S.statHistory.length-2]:null;
-  let html='<div style="padding:10px 16px 0;display:flex;gap:8px"><button class="btn btn-ghost btn-sm" style="flex:1" onclick="openGoals()">🎯 Goals</button></div>';
+  let html='<div style="padding:10px 16px 0;display:flex;gap:8px"><button class="btn btn-ghost btn-sm" style="flex:1" onclick="openGoals()">🎯 Goals</button><button class="btn btn-gold btn-sm" style="flex:1" onclick="openAiPrompt()">🤖 AI Prompt</button></div>';
   if(!latest){html+=`<div class="empty-state"><svg viewBox="0 0 64 64"><rect x="8" y="8" width="48" height="48" rx="6"/><path d="M20 32h8m8 0h8M32 20v8m0 8v8"/></svg><h3>No stats yet</h3><p>Tap Edit to record your first measurements</p><button class="btn btn-primary" onclick="openEditStats()">Record First Entry</button></div>`;document.getElementById('stats-display').innerHTML=html;return;}
   const groups={info:'Identity',measurement:'Body Measurements',performance:'Performance',health:'Health Markers',custom:'Custom Metrics'};
   const grouped={};S.statFields.forEach(f=>{const g=f.type||'custom';if(!grouped[g])grouped[g]=[];grouped[g].push(f);});
@@ -1322,7 +1339,9 @@ function openEditStats(){
       const genderField=grouped[gk].find(f=>f.key==='gender')||{key:'gender',label:'Gender',unit:'',cycle:'yearly',type:'info'};
       const dobVal=latest?(latest.values.dob||''):'';
       const genderVal=latest?(latest.values.gender||''):'';
-      html+=`<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--orange);margin:12px 0 8px;font-weight:500">${gl}</div><div class="identity-card"><div class="identity-field"><label>${dobField.label}</label><input id="dob-input" class="identity-input" type="date" data-stat-key="dob" value="${dobVal}" onchange="updateAgePreview()"><div id="age-preview" style="font-size:11px;color:var(--white3);margin-top:4px">${dobVal?`Age: ${calcAgeFromDob(dobVal)} yrs`:'Enter DOB to calculate age'}</div></div><div class="identity-field"><label>${genderField.label}</label><input type="hidden" data-stat-key="gender" id="gender-input" value="${genderVal}"><div class="gender-toggle"><button type="button" class="${genderVal==='Male'?'active':''}" onclick="setGender('Male')">Male</button><button type="button" class="${genderVal==='Female'?'active':''}" onclick="setGender('Female')">Female</button><button type="button" class="${genderVal==='Other'?'active':''}" onclick="setGender('Other')">Other</button></div></div></div>`;
+      const bodyTypeVal=latest?(latest.values.body_type||''):'';
+      const bodyTypeField=grouped[gk].find(f=>f.key==='body_type')||{label:'Body Type'};
+      html+=`<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--orange);margin:12px 0 8px;font-weight:500">${gl}</div><div class="identity-card"><div class="identity-field"><label>${dobField.label}</label><input id="dob-input" class="identity-input" type="date" data-stat-key="dob" value="${dobVal}" onchange="updateAgePreview()"><div id="age-preview" style="font-size:11px;color:var(--white3);margin-top:4px">${dobVal?`Age: ${calcAgeFromDob(dobVal)} yrs`:'Enter DOB to calculate age'}</div></div><div class="identity-field"><label>${genderField.label}</label><input type="hidden" data-stat-key="gender" id="gender-input" value="${genderVal}"><div class="gender-toggle"><button type="button" class="${genderVal==='Male'?'active':''}" onclick="setGender('Male')">Male</button><button type="button" class="${genderVal==='Female'?'active':''}" onclick="setGender('Female')">Female</button><button type="button" class="${genderVal==='Other'?'active':''}" onclick="setGender('Other')">Other</button></div></div><div class="identity-field" style="width:100%;"><label>${bodyTypeField.label}</label><select data-stat-key="body_type" id="body-type-input" class="identity-input"><option value="">Select body type</option><option value="Ectomorph"${bodyTypeVal==='Ectomorph'?' selected':''}>Ectomorph</option><option value="Mesomorph"${bodyTypeVal==='Mesomorph'?' selected':''}>Mesomorph</option><option value="Endomorph"${bodyTypeVal==='Endomorph'?' selected':''}>Endomorph</option></select></div></div>`;
       return;
     }
     html+=`<div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--orange);margin:12px 0 8px;font-weight:500">${gl}</div>`;
@@ -1359,6 +1378,77 @@ function openGoals(){
   document.getElementById('goal-edit-fields').innerHTML=html;openModal('modal-goals');
 }
 function saveGoals(){document.querySelectorAll('[data-goal-key]').forEach(el=>{if(el.value.trim())S.goals[el.dataset.goalKey]=el.value.trim();else delete S.goals[el.dataset.goalKey];});saveS();closeModal('modal-goals');renderStats();toast('Goals saved');}
+function openAiPrompt(){const prompt=buildAiPrompt();const textarea=document.getElementById('ai-prompt-text');if(textarea){textarea.value=prompt;}openModal('modal-ai-prompt');}
+function copyAiPrompt(){const textarea=document.getElementById('ai-prompt-text');if(!textarea)return;textarea.select();navigator.clipboard.writeText(textarea.value).then(()=>toast('Prompt copied'),()=>toast('Copy failed'))}
+function buildAiPrompt(){
+  const latest=S.statHistory.length?S.statHistory[S.statHistory.length-1]:null;
+  const prev=S.statHistory.length>1?S.statHistory[S.statHistory.length-2]:null;
+  const age=(latest&&latest.values.dob)?calcAgeFromDob(latest.values.dob):'Unknown';
+  const sex=(latest&&latest.values.gender)?latest.values.gender:'Unknown';
+  const goalsString=buildGoalsString();
+  let prompt='Act as an expert clinical sports medicine physician, longevity coach, and certified personal trainer. Analyze my biometric trends, current goals, and training data sequentially using the framework below.\n\n';
+  prompt+='### 1. User Profile & Core Goals\n';
+  prompt+=`* Age/Sex: ${age} / ${sex}\n`;
+  prompt+=`* Primary Health & Fitness Goals: ${goalsString}\n\n`;
+  prompt+='### 2. Biometric & Health Metrics (Historical Baseline vs. Current)\n';
+  const biometricLines=buildBiometricLines(latest,prev);
+  if(biometricLines.length){prompt+=biometricLines.join('\n')+'\n\n';}
+  else{prompt+='* No biometric metrics available yet; starting baseline routine.\n\n';}
+  prompt+='### 3. Logged Workout Performance Averages (Past Days)\n';
+  const workoutLines=buildWorkoutSummaryLines();
+  if(workoutLines.length){prompt+=workoutLines.join('\n')+'\n\n';}
+  else{prompt+='* No current workout averages logged yet; starting baseline routine.\n\n';}
+  prompt+='### 4. Your Step-by-Step Analysis Framework:\n\n';
+  prompt+='Step 1: Current Snapshot ("How I am doing right now")\n';
+  prompt+='Evaluate my most recent stats and workout averages. Give a transparent look at my current physical condition relative to my primary goals. Highlight the clear "Wins" (where to maintain) and immediate "Gaps" (where to improve).\n\n';
+  prompt+='Step 2: Immediate Comparison ("How I am doing compared to my last stats")\n';
+  prompt+='Compare my current averages directly against my immediate last recorded baseline. Am I trending in the right direction, stalling, or showing signs of systemic fatigue/regression?\n\n';
+  prompt+='Step 3: Deep Dive Metrics Focus\n';
+  prompt+='Pay special attention to Blood Pressure and VO2 Max (if present in the data above). Evaluate them against clinical standards and explain how my sleep, stress, and workout metrics are directly impacting them. If other advanced metrics are present (such as body composition or recovery scores), seamlessly integrate them into this analysis.\n\n';
+  prompt+='Step 4: Prompt for Custom Range ("Set the user\'s horizon")\n';
+  prompt+='At the very end of your response, explicitly ask me what specific historical timeframe I would like to compare these numbers against next (e.g., "Would you like to compare these stats against your 3-month baseline, 6-month baseline, or a specific custom date range to see your long-term trajectory?").\n';
+  return prompt;
+}
+function buildGoalsString(){
+  const goals=Object.entries(S.goals||{}).map(([key,val])=>{const field=S.statFields.find(f=>f.key===key);const label=field?field.label:key;return `${label}: ${val}`;}).filter(Boolean);
+  return goals.length?goals.join('; '):'Not specified';
+}
+function buildBiometricLines(latest,prev){
+  const lines=[];
+  const metrics=S.statFields.filter(f=>f.type!=='info');
+  metrics.forEach(f=>{
+    const curr=latest?.values[f.key];
+    const past=prev?.values[f.key];
+    const pastLabel=(past===undefined||past==='')? 'N/A - Initial Baseline': `${past}${f.unit?` ${f.unit}`:''}`;
+    const currentLabel=(curr===undefined||curr==='')? 'N/A' : `${curr}${f.unit?` ${f.unit}`:''}`;
+    lines.push(`* ${f.label}: ${pastLabel} vs. ${currentLabel}`);
+  });
+  return lines;
+}
+function buildWorkoutSummaryLines(){
+  const dates=Object.keys(S.workoutLog||{}).filter(ds=>isDateWithinDays(ds,30));
+  const workouts=dates.flatMap(ds=>{return (S.workoutLog[ds]||[]).map(item=>({date:ds,...item}));});
+  if(!workouts.length)return [];
+  const sessionCount=workouts.length;
+  const weeklyAvg=(sessionCount/(30/7)).toFixed(1);
+  const totalSeconds=workouts.reduce((sum,w)=>sum+parseTime(w.totalTime),0);
+  const avgSeconds=totalSeconds/sessionCount;
+  const modalityCounts={};
+  workouts.forEach(w=>{const label=classifyWorkoutType(w);modalityCounts[label]=(modalityCounts[label]||0)+1;});
+  const modalityLine=Object.entries(modalityCounts).map(([m,c])=>`${m}: ${c} session${c===1?'':'s'}`).join(', ');
+  const distinctNames=[...new Set(workouts.map(w=>w.name))];
+  const summary=[];
+  summary.push(`* Total workout sessions: ${sessionCount} in the past 30 days`);
+  summary.push(`* Average workouts per week: ${weeklyAvg}`);
+  if(modalityLine)summary.push(`* Modalities logged: ${modalityLine}`);
+  if(distinctNames.length)summary.push(`* Session types: ${distinctNames.slice(0,6).join(', ')}${distinctNames.length>6?'...':''}`);
+  if(avgSeconds)summary.push(`* Average session duration: ${formatDuration(avgSeconds)}`);
+  return summary;
+}
+function isDateWithinDays(ds,days){const date=new Date(ds+'T00:00');if(isNaN(date))return false;const diff=(Date.now()-date.getTime())/(1000*60*60*24);return diff>=0&&diff<=days;}
+function parseTime(str){if(!str||typeof str!=='string')return 0;const parts=str.split(':').map(p=>parseInt(p,10));if(parts.length===3)return parts[0]*3600+parts[1]*60+parts[2];if(parts.length===2)return(parts[0]*60+parts[1])*60;return 0;}
+function formatDuration(seconds){const secs=Math.round(seconds);const min=Math.floor(secs/60);const sec=secs%60;return `${min}:${String(sec).padStart(2,'0')}`;}
+function classifyWorkoutType(workout){const name=(workout.name||'').toLowerCase();const cat=(workout.category||'').toLowerCase();if(/cardio|conditioning|run|row|cycle|bike|ellip|sprint|jump|walk|hike|stair/.test(name+' '+cat))return 'Cardio/Conditioning';return 'Resistance Training';}
 
 // ═══════════════ CALENDAR ═══════════════
 function renderCalendar(){
