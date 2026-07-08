@@ -505,20 +505,50 @@ select option:hover,select option:focus{background:rgba(255,255,255,0.12);color:
 <div class="modal-backdrop" id="modal-add-exercise"><div class="modal">
   <button class="modal-close" onclick="closeModal('modal-add-exercise')">×</button>
   <div class="modal-title">ADD EXERCISE</div>
-  <div class="mrow"><label>Category</label><select id="ex-cat" onchange="populateExercisePicker()"><option value="">-- Select --</option></select></div>
-  <div class="mrow"><label>Exercise</label><select id="ex-name"><option value="">-- Select category first --</option></select></div>
-  <div class="mrow"><label>Or type</label><input id="ex-custom" placeholder="Custom name..."></div>
-  <div class="mrow"><label>Group</label><select id="ex-group-type"><option value="">Normal</option><option value="Superset">Superset</option><option value="Triset">Triset</option></select></div>
-  <div style="margin:10px 0 4px;font-size:11px;color:var(--white4);text-transform:uppercase;letter-spacing:.5px">Sets</div>
-  <div class="set-hdr"><span>#</span><span>Reps</span><span>Weight</span><span>Time</span><span></span><span>Copy</span><span>Del</span></div>
-  <div id="ex-sets-list"></div>
-  <div style="display:flex;gap:6px;margin-bottom:10px">
-    <button class="btn btn-ghost btn-sm" onclick="addModalSetRow()">+ Set</button>
+  <div class="mrow"><label>Group</label><select id="ex-group-type" onchange="updateGroupType()"><option value="">Normal</option><option value="Superset">Superset</option><option value="Triset">Triset</option></select></div>
+  <div id="group-instructions" style="font-size:11px;color:var(--white4);margin:8px 0 12px;line-height:1.4">Normal: single exercise. Superset: select 2 exercises in the same block. Triset: select 3 exercises in the same block.</div>
+  <div id="ex-blocks">
+    <div class="exercise-block" id="ex-block-0" data-block="0">
+      <div style="margin-bottom:12px;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:12px;font-weight:700">Exercise 1</div>
+      <div class="mrow"><label>Exercise 1 Category</label><select class="ex-cat-block" onchange="populateExercisePickerBlock(0)"><option value="">-- Select --</option></select></div>
+      <div class="mrow"><label>Exercise 1</label><select class="ex-name-block"><option value="">-- Select category first --</option></select></div>
+      <div class="mrow"><label>Or type</label><input class="ex-custom-block" placeholder="Custom name..." oninput="updateAddButtonState()"></div>
+      <div style="margin:10px 0 4px;font-size:11px;color:var(--white4);text-transform:uppercase;letter-spacing:.5px">Sets</div>
+      <div class="set-hdr"><span>#</span><span>Reps</span><span>Weight</span><span>Time</span><span></span><span>Copy</span><span>Del</span></div>
+      <div class="ex-sets-block" id="ex-sets-block-0"></div>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button class="btn btn-ghost btn-sm" type="button" onclick="addModalSetRow(0)">+ Set</button>
+      </div>
+    </div>
+    <div class="exercise-block" id="ex-block-1" data-block="1" style="display:none">
+      <div style="margin-bottom:12px;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:12px;font-weight:700">Exercise 2</div>
+      <div class="mrow"><label>Exercise 2 Category</label><select class="ex-cat-block" onchange="populateExercisePickerBlock(1)"><option value="">-- Select --</option></select></div>
+      <div class="mrow"><label>Exercise 2</label><select class="ex-name-block"><option value="">-- Select category first --</option></select></div>
+      <div class="mrow"><label>Or type</label><input class="ex-custom-block" placeholder="Custom name..." oninput="updateAddButtonState()"></div>
+      <div style="margin:10px 0 4px;font-size:11px;color:var(--white4);text-transform:uppercase;letter-spacing:.5px">Sets</div>
+      <div class="set-hdr"><span>#</span><span>Reps</span><span>Weight</span><span>Time</span><span></span><span>Copy</span><span>Del</span></div>
+      <div class="ex-sets-block" id="ex-sets-block-1"></div>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button class="btn btn-ghost btn-sm" type="button" onclick="addModalSetRow(1)">+ Set</button>
+      </div>
+    </div>
+    <div class="exercise-block" id="ex-block-2" data-block="2" style="display:none">
+      <div style="margin-bottom:12px;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:12px;font-weight:700">Exercise 3</div>
+      <div class="mrow"><label>Exercise 3 Category</label><select class="ex-cat-block" onchange="populateExercisePickerBlock(2)"><option value="">-- Select --</option></select></div>
+      <div class="mrow"><label>Exercise 3</label><select class="ex-name-block"><option value="">-- Select category first --</option></select></div>
+      <div class="mrow"><label>Or type</label><input class="ex-custom-block" placeholder="Custom name..." oninput="updateAddButtonState()"></div>
+      <div style="margin:10px 0 4px;font-size:11px;color:var(--white4);text-transform:uppercase;letter-spacing:.5px">Sets</div>
+      <div class="set-hdr"><span>#</span><span>Reps</span><span>Weight</span><span>Time</span><span></span><span>Copy</span><span>Del</span></div>
+      <div class="ex-sets-block" id="ex-sets-block-2"></div>
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button class="btn btn-ghost btn-sm" type="button" onclick="addModalSetRow(2)">+ Set</button>
+      </div>
+    </div>
   </div>
   <div class="mrow"><label>Total time</label>
     <div id="modal-total-time" style="font-family:var(--font-mono);font-size:15px;color:var(--orange2);padding:8px 10px;background:var(--surface3);border:1px solid var(--border);border-radius:6px;min-width:80px;text-align:center">0:00</div>
   </div>
-  <button class="btn btn-primary full" onclick="confirmAddExercise()">Add to Session</button>
+  <button class="btn btn-primary full" id="add-to-session-btn" onclick="confirmAddExercise()" disabled>Add to Session</button>
 </div></div>
 
 <!-- Time Picker Modal -->
@@ -853,18 +883,17 @@ function fmtSec(sec){const m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0':
 
 // ═══════════════ BREAK MODAL ═══════════════
 let breakCallback=null,breakCtx=null;
-function openBreakModal(afterIdx,exIdx){
+function openBreakModal(afterIdx,exIdx,blockIdx=0){
   buildDrum('brk-min',5,1,1);buildDrum('brk-sec',55,5,0);
-  breakCtx={afterIdx,exIdx};openModal('modal-break');
+  breakCtx={afterIdx,exIdx,blockIdx};openModal('modal-break');
 }
 function confirmBreak(allSets){
   const m=getDrumVal('brk-min'),s=getDrumVal('brk-sec');
   const dur=m*60+s;
-  const {afterIdx,exIdx}=breakCtx;
+  const {afterIdx,blockIdx}=breakCtx;
+  const list=document.getElementById('ex-sets-block-'+blockIdx);
+  const rows=[...list.querySelectorAll('.set-row')];
   if(allSets){
-    // insert between all set rows in #ex-sets-list
-    const list=document.getElementById('ex-sets-list');
-    const rows=[...list.querySelectorAll('.set-row')];
     rows.forEach((row,i)=>{
       const existing=row.nextSibling;
       if(!existing||!existing.classList||!existing.classList.contains('break-row')){
@@ -876,8 +905,6 @@ function confirmBreak(allSets){
       }
     });
   } else {
-    const list=document.getElementById('ex-sets-list');
-    const rows=[...list.querySelectorAll('.set-row')];
     if(rows[afterIdx]){
       const br=makeBreakRowEl(dur);
       rows[afterIdx].parentNode.insertBefore(br,rows[afterIdx].nextSibling);
@@ -899,25 +926,25 @@ function editBreakTime(btn){
 }
 
 // ═══════════════ MODAL SET ROWS ═══════════════
-function addModalSetRow(reps='',lbs='',timeSec=0,status=''){
-  const list=document.getElementById('ex-sets-list');
+function addModalSetRow(blockIdx,reps='',lbs='',timeSec=0,status=''){
+  const list=document.getElementById('ex-sets-block-'+blockIdx);
   const idx=list.querySelectorAll('.set-row').length+1;
   const row=document.createElement('div');row.className='set-row';
   row.innerHTML=`<span class="set-num">${idx}</span>
-    <input value="${reps}" placeholder="12" onchange="calcModalTotalTime()">
+    <input value="${reps}" placeholder="12" onchange="calcModalTotalTime();updateAddButtonState()">
     <input value="${lbs}" placeholder="lbs">
     <button class="break-time-btn" data-sec="${timeSec}" onclick="openSetTimePicker(this)" style="text-align:center">${fmtSec(timeSec)}</button>
     <div class="set-check ${status}" onclick="cycleModalCheck(this)">${status==='done'?'✓':status==='failed'?'✗':'○'}</div>
     <button class="btn btn-ghost btn-sm btn-icon" onclick="duplicateRow(this)" title="Duplicate">⧉</button>
-    <button class="btn btn-danger btn-sm btn-icon" onclick="this.closest('.set-row').remove();renumberSets();calcModalTotalTime()">✕</button>`;
-  // Insert break button after row
+    <button class="btn btn-danger btn-sm btn-icon" onclick="this.closest('.set-row').remove();renumberSets();calcModalTotalTime();updateAddButtonState()">✕</button>`;
   const brBtn=document.createElement('button');brBtn.className='between-sets-btn';brBtn.textContent='+ Break';
   brBtn.onclick=()=>{
     const rows=[...list.querySelectorAll('.set-row')];const i=rows.indexOf(row);
-    openBreakModal(i,null);
+    openBreakModal(i,null,blockIdx);
   };
   list.appendChild(row);list.appendChild(brBtn);
   renumberSets();
+  updateAddButtonState();
 }
 function openSetTimePicker(btn){
   const cur=parseInt(btn.dataset.sec)||0;
@@ -929,24 +956,28 @@ function cycleModalCheck(el){
   el.textContent=el.className.includes('done')?'✓':el.className.includes('failed')?'✗':'○';
 }
 function duplicateRow(btn){
-  const row=btn.closest('.set-row');const list=document.getElementById('ex-sets-list');
-  const inputs=row.querySelectorAll('input');const reps=inputs[0]?.value||'';const lbs=inputs[1]?.value||'';
+  const row=btn.closest('.set-row');
+  const block=row.closest('.exercise-block');
+  const blockIdx=parseInt(block?.dataset.block||'0',10);
+  const inputs=row.querySelectorAll('input');
+  const reps=inputs[0]?.value||'';const lbs=inputs[1]?.value||'';
   const timeSec=parseInt(row.querySelector('.break-time-btn')?.dataset.sec)||0;
   const statusEl=row.querySelector('.set-check');
   const st=[...statusEl.classList].find(c=>['done','failed'].includes(c))||'';
-  const brBtn=row.nextSibling;
-  addModalSetRow(reps,lbs,timeSec,st);
+  addModalSetRow(blockIdx,reps,lbs,timeSec,st);
   calcModalTotalTime();
 }
 function renumberSets(){
-  document.querySelectorAll('#ex-sets-list .set-row').forEach((r,i)=>{
-    const n=r.querySelector('.set-num');if(n)n.textContent=i+1;
+  document.querySelectorAll('#ex-blocks .ex-sets-block').forEach(list=>{
+    list.querySelectorAll('.set-row').forEach((r,i)=>{
+      const n=r.querySelector('.set-num');if(n)n.textContent=i+1;
+    });
   });
 }
 function calcModalTotalTime(){
   let total=0;
-  document.querySelectorAll('#ex-sets-list .set-row').forEach(r=>{const b=r.querySelector('.break-time-btn');if(b)total+=parseInt(b.dataset.sec)||0;});
-  document.querySelectorAll('#ex-sets-list .break-row').forEach(r=>{const b=r.querySelector('.break-time-btn');if(b)total+=parseInt(b.dataset.sec)||0;});
+  document.querySelectorAll('#ex-blocks .set-row').forEach(r=>{const b=r.querySelector('.break-time-btn');if(b)total+=parseInt(b.dataset.sec)||0;});
+  document.querySelectorAll('#ex-blocks .break-row').forEach(r=>{const b=r.querySelector('.break-time-btn');if(b)total+=parseInt(b.dataset.sec)||0;});
   document.getElementById('modal-total-time').textContent=fmtSec(total);
 }
 
@@ -1094,42 +1125,106 @@ function duplicateSessionRow(ei,ri){
   S.workoutLog[sessionDate][ei].rows.splice(ri+1,0,{...row});
   saveS();renderToday();
 }
+function updateAddButtonState(){
+  const groupType=document.getElementById('ex-group-type').value||'';
+  const required=groupType==='Triset'?3:groupType==='Superset'?2:1;
+  const blocks=[...document.querySelectorAll('#ex-blocks .exercise-block')].map(block=>{
+    const sel=block.querySelector('.ex-name-block')?.value||'';
+    const cust=block.querySelector('.ex-custom-block')?.value.trim()||'';
+    const rows=block.querySelectorAll('.ex-sets-block .set-row').length;
+    return {name:cust||sel,rows};
+  });
+  const validCount=blocks.filter(b=>b.name && b.rows>0).length;
+  const btn=document.getElementById('add-to-session-btn');
+  const disabled = validCount < required;
+  if(btn){btn.disabled=disabled;btn.style.opacity=disabled?0.5:1;}
+}
 function openDatePicker(){document.getElementById('session-date-input').value=sessionDate;openModal('modal-date-picker');}
 function applySessionDate(){const d=document.getElementById('session-date-input').value;if(d){sessionDate=d;}closeModal('modal-date-picker');renderToday();toast('Session: '+sessionDate);}
 function finishWorkout(){const log=S.workoutLog[sessionDate];if(!log||!log.length){toast('No exercises to save');return;}saveS();renderToday();renderCalendar();toast('Workout saved ✓');}
 
 function openAddExercise(){
-  const sel=document.getElementById('ex-cat');
-  sel.innerHTML='<option value="">-- Select --</option>';
-  Object.keys(S.exercises).forEach(c=>sel.innerHTML+=`<option value="${c}">${c}</option>`);
-  document.getElementById('ex-sets-list').innerHTML='';
-  document.getElementById('ex-custom').value='';
-  document.getElementById('ex-name').innerHTML='<option value="">-- Select category first --</option>';
-  addModalSetRow();calcModalTotalTime();
+  document.getElementById('ex-group-type').value='';
+  resetExerciseBlocks();
+  showExerciseBlocks(1);
+  updateAddButtonState();
   openModal('modal-add-exercise');
 }
-function populateExercisePicker(){
-  const cat=document.getElementById('ex-cat').value;const sel=document.getElementById('ex-name');
-  if(!cat){sel.innerHTML='<option>-- Select category first --</option>';return;}
+function updateGroupType(){
+  const type=document.getElementById('ex-group-type').value;
+  const count=type==='Triset'?3:type==='Superset'?2:1;
+  showExerciseBlocks(count);
+  updateAddButtonState();
+}
+function resetExerciseBlocks(){
+  const categories=Object.keys(S.exercises);
+  for(let i=0;i<3;i++){
+    const block=document.getElementById('ex-block-'+i);
+    if(!block) continue;
+    block.style.display=i===0?'block':'none';
+    const cat=block.querySelector('.ex-cat-block');
+    const sel=block.querySelector('.ex-name-block');
+    const cust=block.querySelector('.ex-custom-block');
+    const sets=block.querySelector('.ex-sets-block');
+    cat.innerHTML='<option value="">-- Select --</option>' + categories.map(c=>`<option value="${c}">${c}</option>`).join('');
+    sel.innerHTML='<option value="">-- Select category first --</option>';
+    cust.value='';
+    sets.innerHTML='';
+  }
+}
+function showExerciseBlocks(count){
+  for(let i=0;i<3;i++){
+    const block=document.getElementById('ex-block-'+i);
+    if(!block) continue;
+    const visible = i < count;
+    block.style.display = visible ? 'block' : 'none';
+    block.hidden = !visible;
+  }
+}
+function populateExercisePickerBlock(blockIdx){
+  const block=document.getElementById('ex-block-'+blockIdx);
+  if(!block)return;
+  const cat=block.querySelector('.ex-cat-block').value;
+  const sel=block.querySelector('.ex-name-block');
+  if(!cat){
+    sel.innerHTML='<option value="">-- Select category first --</option>';
+    updateAddButtonState();
+    return;
+  }
   sel.innerHTML='<option value="">-- Select exercise --</option>'+(S.exercises[cat]||[]).map(e=>`<option value="${e}">${e}</option>`).join('');
+  sel.onchange = updateAddButtonState;
+  updateAddButtonState();
 }
 function confirmAddExercise(){
-  const cat=document.getElementById('ex-cat').value;const selN=document.getElementById('ex-name').value;const cust=document.getElementById('ex-custom').value.trim();const groupType=document.getElementById('ex-group-type').value||'';const name=cust||selN;
-  if(!name){toast('Select or type an exercise');return;}
-  const rows=[];
-  const list=document.getElementById('ex-sets-list');
-  [...list.children].forEach(el=>{
-    if(el.classList.contains('set-row')){
-      const inputs=el.querySelectorAll('input');const timebtn=el.querySelector('.break-time-btn');const statusEl=el.querySelector('.set-check');
-      const st=[...statusEl.classList].find(c=>['done','failed'].includes(c))||'';
-      rows.push({type:'set',reps:inputs[0]?.value||'',lbs:inputs[1]?.value||'',sec:parseInt(timebtn?.dataset.sec)||0,status:st});
-    } else if(el.classList.contains('break-row')){
-      const btn=el.querySelector('.break-time-btn');rows.push({type:'break',sec:parseInt(btn?.dataset.sec)||60});
-    }
+  const groupType=document.getElementById('ex-group-type').value||'';
+  const required=groupType==='Triset'?3:groupType==='Superset'?2:1;
+  const blocks=[...document.querySelectorAll('#ex-blocks .exercise-block')].map(block=>{
+    const cat=block.querySelector('.ex-cat-block')?.value||'';
+    const sel=block.querySelector('.ex-name-block')?.value||'';
+    const cust=block.querySelector('.ex-custom-block')?.value.trim()||'';
+    const name=cust||sel;
+    const rows=[];
+    [...block.querySelector('.ex-sets-block').children].forEach(el=>{
+      if(el.classList.contains('set-row')){
+        const inputs=el.querySelectorAll('input');const timebtn=el.querySelector('.break-time-btn');const statusEl=el.querySelector('.set-check');
+        const st=[...statusEl.classList].find(c=>['done','failed'].includes(c))||'';
+        rows.push({type:'set',reps:inputs[0]?.value||'',lbs:inputs[1]?.value||'',sec:parseInt(timebtn?.dataset.sec)||0,status:st});
+      } else if(el.classList.contains('break-row')){
+        const btn=el.querySelector('.break-time-btn');rows.push({type:'break',sec:parseInt(btn?.dataset.sec)||60});
+      }
+    });
+    return {name,category:cat,rows};
   });
-  const totalSec=rows.reduce((a,r)=>a+(r.sec||0),0);
+  const validBlocks=blocks.filter(b=>b.name && b.rows.length>0);
+  if(validBlocks.length<required){
+    toast(`Select and configure ${required} exercise${required>1?'s':''} for ${groupType||'Normal'}`);
+    return;
+  }
   if(!S.workoutLog[sessionDate])S.workoutLog[sessionDate]=[];
-  S.workoutLog[sessionDate].push({name,category:cat,groupType:groupType||'',rows,totalTime:fmtSec(totalSec)});
+  validBlocks.forEach(b=>{
+    const totalSec=b.rows.reduce((a,r)=>a+(r.sec||0),0);
+    S.workoutLog[sessionDate].push({name:b.name,category:b.category,groupType:groupType||'',rows:b.rows,totalTime:fmtSec(totalSec)});
+  });
   saveS();closeModal('modal-add-exercise');renderToday();toast('Exercise added');
 }
 
