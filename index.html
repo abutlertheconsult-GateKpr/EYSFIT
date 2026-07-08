@@ -1434,21 +1434,82 @@ function buildWorkoutSummaryLines(){
   const dates=Object.keys(S.workoutLog||{}).filter(ds=>isDateWithinDays(ds,30));
   const workouts=dates.flatMap(ds=>{return (S.workoutLog[ds]||[]).map(item=>({date:ds,...item}));});
   if(!workouts.length)return [];
+  
   const sessionCount=workouts.length;
   const weeklyAvg=(sessionCount/(30/7)).toFixed(1);
   const totalSeconds=workouts.reduce((sum,w)=>sum+parseTime(w.totalTime),0);
   const avgSeconds=totalSeconds/sessionCount;
-  const modalityCounts={};
-  workouts.forEach(w=>{const label=classifyWorkoutType(w);modalityCounts[label]=(modalityCounts[label]||0)+1;});
-  const modalityLine=Object.entries(modalityCounts).map(([m,c])=>`${m}: ${c} session${c===1?'':'s'}`).join(', ');
-  const distinctNames=[...new Set(workouts.map(w=>w.name))];
+  
+  // Categorize workouts
+  const resistanceWorkouts=workouts.filter(w=>classifyWorkoutType(w)==='Resistance Training');
+  const cardioWorkouts=workouts.filter(w=>classifyWorkoutType(w)==='Cardio/Conditioning');
+  
+  // Calculate stats per category
+  const resistanceStats=buildCategoryStats(resistanceWorkouts, 'Resistance Training');
+  const cardioStats=buildCategoryStats(cardioWorkouts, 'Cardio/Conditioning');
+  
+  // Build summary
   const summary=[];
   summary.push(`* Total workout sessions: ${sessionCount} in the past 30 days`);
   summary.push(`* Average workouts per week: ${weeklyAvg}`);
+  
+  if(resistanceStats){summary.push(resistanceStats);}
+  if(cardioStats){summary.push(cardioStats);}
+  
+  // Modality breakdown
+  const modalityCounts={};
+  workouts.forEach(w=>{
+    const modality=extractWorkoutModality(w);
+    if(modality)modalityCounts[modality]=(modalityCounts[modality]||0)+1;
+  });
+  const modalityLine=Object.entries(modalityCounts).map(([m,c])=>`${m}: ${c} session${c===1?'':'s'}`).join(', ');
   if(modalityLine)summary.push(`* Modalities logged: ${modalityLine}`);
+  
+  // Session types
+  const distinctNames=[...new Set(workouts.map(w=>w.name))];
   if(distinctNames.length)summary.push(`* Session types: ${distinctNames.slice(0,6).join(', ')}${distinctNames.length>6?'...':''}`);
+  
   if(avgSeconds)summary.push(`* Average session duration: ${formatDuration(avgSeconds)}`);
+  
   return summary;
+}
+
+function buildCategoryStats(workouts, category){
+  if(!workouts.length)return null;
+  const sessions=workouts.length;
+  const sessionsPerWeek=(sessions/(30/7)).toFixed(2);
+  const totalSeconds=workouts.reduce((sum,w)=>sum+parseTime(w.totalTime),0);
+  const avgDuration=(totalSeconds/sessions/60).toFixed(1);
+  const parts=[`${sessionsPerWeek} sessions/week`, `avg duration ${avgDuration} mins`];
+  const primaryModality=getPrimaryModalityForCategory(workouts);
+  let line=`* ${category}: ${parts.join(', ')}`;
+  if(primaryModality)line+=` (Primary Modality: ${primaryModality})`;
+  return line;
+}
+
+function getPrimaryModalityForCategory(workouts){
+  const modalities=workouts.map(w=>extractWorkoutModality(w)).filter(Boolean);
+  if(!modalities.length)return null;
+  const counts={};
+  modalities.forEach(m=>{counts[m]=(counts[m]||0)+1;});
+  return Object.entries(counts).sort(([,a],[,b])=>b-a)[0]?.[0]||null;
+}
+
+function extractWorkoutModality(workout){
+  const name=(workout.name||'').toLowerCase();
+  if(/run|trail/.test(name))return 'Running';
+  if(/row|rowing/.test(name))return 'Rowing';
+  if(/cycle|bike/.test(name))return 'Cycling';
+  if(/swim/.test(name))return 'Swimming';
+  if(/ellip/.test(name))return 'Elliptical';
+  if(/box|boxing/.test(name))return 'Boxing';
+  if(/weight|barbell|dumbbell|deadlift|squat|bench|press|lift/.test(name))return 'Weight Training';
+  if(/calisthen|bodyweight|push|pull|core/.test(name))return 'Calisthenics';
+  if(/hike|walk/.test(name))return 'Walking';
+  if(/jump|plyometric/.test(name))return 'Plyometrics';
+  if(/sprint|sprint/.test(name))return 'Sprint';
+  if(/conditioning|metabolic/.test(name))return 'Conditioning';
+  return null;
 }
 function isDateWithinDays(ds,days){const date=new Date(ds+'T00:00');if(isNaN(date))return false;const diff=(Date.now()-date.getTime())/(1000*60*60*24);return diff>=0&&diff<=days;}
 function parseTime(str){if(!str||typeof str!=='string')return 0;const parts=str.split(':').map(p=>parseInt(p,10));if(parts.length===3)return parts[0]*3600+parts[1]*60+parts[2];if(parts.length===2)return(parts[0]*60+parts[1])*60;return 0;}
