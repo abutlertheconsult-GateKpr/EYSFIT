@@ -507,8 +507,8 @@ select option:hover,select option:focus{background:rgba(255,255,255,0.12);color:
   <div class="modal-title">ADD EXERCISE</div>
   <div class="mrow"><label>Group</label><select id="ex-group-type" onchange="updateGroupType()"><option value="">Normal</option><option value="Superset">Superset</option><option value="Triset">Triset</option></select></div>
   <div id="group-instructions" style="font-size:11px;color:var(--white4);margin:8px 0 12px;line-height:1.4">Normal: single exercise. Superset: select 2 exercises in the same block. Triset: select 3 exercises in the same block.</div>
-  <div id="ex-blocks">
-    <div class="exercise-block" id="ex-block-0" data-block="0">
+  <div id="ex-blocks" style="display:flex;flex-direction:column;gap:10px">
+    <div class="exercise-block" id="ex-block-0" data-block="0" style="padding:10px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;background:rgba(255,255,255,0.04)">
       <div style="margin-bottom:12px;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:12px;font-weight:700">Exercise 1</div>
       <div class="mrow"><label>Exercise 1 Category</label><select class="ex-cat-block" onchange="populateExercisePickerBlock(0)"><option value="">-- Select --</option></select></div>
       <div class="mrow"><label>Exercise 1</label><select class="ex-name-block"><option value="">-- Select category first --</option></select></div>
@@ -520,7 +520,7 @@ select option:hover,select option:focus{background:rgba(255,255,255,0.12);color:
         <button class="btn btn-ghost btn-sm" type="button" onclick="addModalSetRow(0)">+ Set</button>
       </div>
     </div>
-    <div class="exercise-block" id="ex-block-1" data-block="1" style="display:none">
+    <div class="exercise-block" id="ex-block-1" data-block="1" style="display:none;padding:10px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;background:rgba(255,255,255,0.04)">
       <div style="margin-bottom:12px;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:12px;font-weight:700">Exercise 2</div>
       <div class="mrow"><label>Exercise 2 Category</label><select class="ex-cat-block" onchange="populateExercisePickerBlock(1)"><option value="">-- Select --</option></select></div>
       <div class="mrow"><label>Exercise 2</label><select class="ex-name-block"><option value="">-- Select category first --</option></select></div>
@@ -532,7 +532,7 @@ select option:hover,select option:focus{background:rgba(255,255,255,0.12);color:
         <button class="btn btn-ghost btn-sm" type="button" onclick="addModalSetRow(1)">+ Set</button>
       </div>
     </div>
-    <div class="exercise-block" id="ex-block-2" data-block="2" style="display:none">
+    <div class="exercise-block" id="ex-block-2" data-block="2" style="display:none;padding:10px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;background:rgba(255,255,255,0.04)">
       <div style="margin-bottom:12px;padding:10px 12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;font-size:12px;font-weight:700">Exercise 3</div>
       <div class="mrow"><label>Exercise 3 Category</label><select class="ex-cat-block" onchange="populateExercisePickerBlock(2)"><option value="">-- Select --</option></select></div>
       <div class="mrow"><label>Exercise 3</label><select class="ex-name-block"><option value="">-- Select category first --</option></select></div>
@@ -1144,10 +1144,15 @@ function applySessionDate(){const d=document.getElementById('session-date-input'
 function finishWorkout(){const log=S.workoutLog[sessionDate];if(!log||!log.length){toast('No exercises to save');return;}saveS();renderToday();renderCalendar();toast('Workout saved ✓');}
 
 function openAddExercise(){
-  document.getElementById('ex-group-type').value='';
+  const group=document.getElementById('ex-group-type');
+  group.value='';
   resetExerciseBlocks();
   showExerciseBlocks(1);
   updateAddButtonState();
+  setTimeout(()=>{
+    showExerciseBlocks(1);
+    updateAddButtonState();
+  },0);
   openModal('modal-add-exercise');
 }
 function updateGroupType(){
