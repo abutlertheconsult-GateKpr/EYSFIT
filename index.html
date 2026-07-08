@@ -951,6 +951,16 @@ function calcModalTotalTime(){
 }
 
 // ═══════════════ WORKOUT PAGE ═══════════════
+function isPartOfSameGroupBlock(log, ei){
+  const ex=log[ei];
+  if(!ex?.groupType) return false;
+  const prev=log[ei-1];
+  const next=log[ei+1];
+  return Boolean((prev && prev.groupType===ex.groupType) || (next && next.groupType===ex.groupType));
+}
+function canAddBreakToExercise(log, ei){
+  return !isPartOfSameGroupBlock(log, ei);
+}
 function renderToday(){
   document.getElementById('workout-date-sub').textContent=fmtDate(sessionDate)+(sessionDate===new Date().toISOString().split('T')[0]?' (today)':'');
   const log=S.workoutLog[sessionDate]||[];
@@ -989,7 +999,7 @@ function renderToday(){
         ${buildSessionRows(ex.rows||[],ei)}
         <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
           <button class="btn btn-ghost btn-sm" onclick="addSetToExercise(${ei})">+ Set</button>
-          <button class="btn btn-ghost btn-sm" onclick="addBreakToExercise(${ei},null)">+ Break</button>
+          ${canAddBreakToExercise(log, ei)?`<button class="btn btn-ghost btn-sm" onclick="addBreakToExercise(${ei},null)">+ Break</button>`:''}
         </div>
       </div>
     </div>`;
@@ -1033,6 +1043,12 @@ function removeExerciseToday(ei){S.workoutLog[sessionDate].splice(ei,1);saveS();
 function addSetToExercise(ei){if(!S.workoutLog[sessionDate][ei].rows)S.workoutLog[sessionDate][ei].rows=[];S.workoutLog[sessionDate][ei].rows.push({type:'set',reps:'',lbs:'',sec:0,status:''});saveS();renderToday();}
 let sessionBreakCtx={ei:null,afterRowIdx:null};
 function addBreakToExercise(ei,afterRowIdx){
+  const log=S.workoutLog[sessionDate]||[];
+  const ex=log[ei];
+  if(ex?.groupType && isPartOfSameGroupBlock(log, ei)){
+    toast(`Breaks are disabled inside ${ex.groupType.toLowerCase()} blocks`);
+    return;
+  }
   sessionBreakCtx={ei,afterRowIdx:afterRowIdx??null};
   buildDrum('sbrk-min',5,1,1);buildDrum('sbrk-sec',55,5,0);
   openModal('modal-session-break');
