@@ -1388,10 +1388,12 @@ function buildAiPrompt(){
   const prev=S.statHistory.length>1?S.statHistory[S.statHistory.length-2]:null;
   const age=(latest&&latest.values.dob)?calcAgeFromDob(latest.values.dob):'Unknown';
   const sex=(latest&&latest.values.gender)?latest.values.gender:'Unknown';
+  const bodyType=(latest&&latest.values.body_type)?latest.values.body_type:'Not specified';
   const goalsString=buildGoalsString();
   let prompt='Act as an expert clinical sports medicine physician, longevity coach, and certified personal trainer. Analyze my biometric trends, current goals, and training data sequentially using the framework below.\n\n';
   prompt+='### 1. User Profile & Core Goals\n';
   prompt+=`* Age/Sex: ${age} / ${sex}\n`;
+  prompt+=`* Body Type: ${bodyType}\n`;
   prompt+=`* Primary Health & Fitness Goals: ${goalsString}\n\n`;
   prompt+='### 2. Biometric & Health Metrics (Historical Baseline vs. Current)\n';
   const biometricLines=buildBiometricLines(latest,prev);
